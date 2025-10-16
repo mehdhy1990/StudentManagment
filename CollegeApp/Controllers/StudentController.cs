@@ -125,7 +125,8 @@ namespace CollegeApp.Controllers
                
                 StudentName = model.StudentName,
                 Address = model.Address,
-                Email = model.Email
+                Email = model.Email,
+                DOB = Convert.ToDateTime(model.DOB)
             };
             _dbContext.Students.Add(student);
             _dbContext.SaveChanges();
