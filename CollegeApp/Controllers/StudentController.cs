@@ -3,6 +3,7 @@ using CollegeApp.Models;
 using CollegeApp.MyLogging;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CollegeApp.Controllers
 {
@@ -150,15 +151,23 @@ namespace CollegeApp.Controllers
             if (model == null || model.Id <= 0)
                 BadRequest();
 
-            var existingStudent = _dbContext.Students.FirstOrDefault(s => s.Id == model.Id);
+            var existingStudent = _dbContext.Students.AsNoTracking().FirstOrDefault(s => s.Id == model.Id);
 
             if (existingStudent == null)
                 return NotFound();
-
-            existingStudent.StudentName = model.StudentName;
-            existingStudent.Email = model.Email;
-            existingStudent.Address = model.Address;
-            existingStudent.DOB = Convert.ToDateTime(model.DOB);
+            var newRecord = new Student()
+            {
+                Id = existingStudent.Id,
+                Address = model.Address,
+                Email = model.Email,
+                StudentName = model.StudentName,
+                DOB = Convert.ToDateTime(model.DOB)
+            };
+            _dbContext.Students.Update(newRecord);
+            //existingStudent.StudentName = model.StudentName;
+            //existingStudent.Email = model.Email;
+            //existingStudent.Address = model.Address;
+            //existingStudent.DOB = Convert.ToDateTime(model.DOB);
             _dbContext.SaveChanges();
 
             return NoContent();
