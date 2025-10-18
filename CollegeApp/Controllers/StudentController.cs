@@ -77,23 +77,17 @@ namespace CollegeApp.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<StudentDTO> GetStudentByName(string name)
+        public async Task<ActionResult<StudentDTO>> GetStudentByName(string name)
         {
             //BadRequest - 400 - Badrequest - Client error
             if (string.IsNullOrEmpty(name))
                 return BadRequest();
 
-            var student = _dbContext.Students.FirstOrDefault(n => n.StudentName == name);
+            var student =await _dbContext.Students.FirstOrDefaultAsync(n => n.StudentName == name);
             //NotFound - 404 - NotFound - Client error
             if (student == null)
                 return NotFound($"The student with name {name} not found");
-            var studentDTO = new StudentDTO
-            {
-                Id = student.Id,
-                StudentName = student.StudentName,
-                Email = student.Email,
-                Address = student.Address
-            };
+            var studentDTO = _mapper.Map<StudentDTO>(student);
             //OK - 200 - Success
             return Ok(studentDTO);
         }
@@ -149,14 +143,7 @@ namespace CollegeApp.Controllers
 
             if (existingStudent == null)
                 return NotFound();
-            var newRecord = new Student()
-            {
-                Id = existingStudent.Id,
-                Address = model.Address,
-                Email = model.Email,
-                StudentName = model.StudentName,
-                DOB = Convert.ToDateTime(model.DOB)
-            };
+            var newRecord =  _mapper.Map<Student>(model);
             _dbContext.Students.Update(newRecord);
             //existingStudent.StudentName = model.StudentName;
             //existingStudent.Email = model.Email;
@@ -174,7 +161,7 @@ namespace CollegeApp.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult UpdateStudentPartial(int id, [FromBody] JsonPatchDocument<StudentDTO> patchDocument)
+        public async Task<ActionResult> UpdateStudentPartial(int id, [FromBody] JsonPatchDocument<StudentDTO> patchDocument)
         {
             if (patchDocument == null || id <= 0)
                 BadRequest();
@@ -184,23 +171,25 @@ namespace CollegeApp.Controllers
             if (existingStudent == null)
                 return NotFound();
 
-            var studentDTO = new StudentDTO
-            {
-                Id = existingStudent.Id,
-                StudentName = existingStudent.StudentName,
-                Email = existingStudent.Email,
-                Address = existingStudent.Address
-            };
+            var studentDTO = _mapper.Map<StudentDTO>(existingStudent);
+            //var studentDTO = new StudentDTO
+            //{
+            //    Id = existingStudent.Id,
+            //    StudentName = existingStudent.StudentName,
+            //    Email = existingStudent.Email,
+            //    Address = existingStudent.Address
+            //};
 
             patchDocument.ApplyTo(studentDTO, ModelState);
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
-            existingStudent.StudentName = studentDTO.StudentName;
-            existingStudent.Email = studentDTO.Email;
-            existingStudent.Address = studentDTO.Address;
-            _dbContext.SaveChanges();
+            existingStudent = _mapper.Map<Student>(studentDTO);
+            //existingStudent.StudentName = studentDTO.StudentName;
+            //existingStudent.Email = studentDTO.Email;
+            //existingStudent.Address = studentDTO.Address;
+            _dbContext.Update(existingStudent);
+           await _dbContext.SaveChangesAsync();
             //204 - NoContent
             return NoContent();
         }
