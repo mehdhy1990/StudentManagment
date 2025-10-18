@@ -30,7 +30,7 @@ namespace CollegeApp.Controllers
             _logger.LogInformation("GetStudents method started");
             var students = await _dbContext.Students.ToListAsync();
 
-            var studentDTOData = _mapper.Map<StudentDTO>(students);
+            var studentDTOData = _mapper.Map<List<StudentDTO>>(students);
             //var students = await _dbContext.Students.Select(s => new StudentDTO()
             //{
             //    Id = s.Id,
@@ -67,13 +67,7 @@ namespace CollegeApp.Controllers
                 return NotFound($"The student with id {id} not found");
             }
 
-            var studentDTO = new StudentDTO
-            {
-                Id = student.Id,
-                StudentName = student.StudentName,
-                Email = student.Email,
-                Address = student.Address
-            };
+            var studentDTO = _mapper.Map<StudentDTO>(student);
             //OK - 200 - Success
             return Ok(studentDTO);
         }
@@ -118,23 +112,17 @@ namespace CollegeApp.Controllers
             if (model == null)
                 return BadRequest();
 
-            //if(model.AdmissionDate < DateTime.Now)
-            //{
-            //    //1. Directly adding error message to modelstate
-            //    //2. Using custom attribute
-            //    ModelState.AddModelError("AdmissionDate Error", "Admission date must be greater than or equal to todays date");
-            //    return BadRequest(ModelState);
-            //}    
 
-           
-            Student student = new Student
-            {
+
+
+            Student student = _mapper.Map<Student>(model);
+            //{
                
-                StudentName = model.StudentName,
-                Address = model.Address,
-                Email = model.Email,
-                DOB = Convert.ToDateTime(model.DOB)
-            };
+            //    StudentName = model.StudentName,
+            //    Address = model.Address,
+            //    Email = model.Email,
+            //    DOB = Convert.ToDateTime(model.DOB)
+            //};
           await  _dbContext.Students.AddAsync(student);
           await  _dbContext.SaveChangesAsync();
 
