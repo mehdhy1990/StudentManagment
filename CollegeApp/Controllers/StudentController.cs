@@ -1,4 +1,5 @@
-﻿using CollegeApp.Data;
+﻿using AutoMapper;
+using CollegeApp.Data;
 using CollegeApp.Models;
 using CollegeApp.MyLogging;
 using Microsoft.AspNetCore.JsonPatch;
@@ -13,10 +14,12 @@ namespace CollegeApp.Controllers
     {
         private readonly ILogger<StudentController> _logger;
         private readonly CollegeDbContext _dbContext;
-        public StudentController(ILogger<StudentController> logger, CollegeDbContext dbContext)
+        private readonly IMapper _mapper;
+        public StudentController(ILogger<StudentController> logger, CollegeDbContext dbContext, IMapper mapper)
         {
             _logger = logger;
             _dbContext = dbContext;
+            _mapper = mapper;
         }
         [HttpGet]
         [Route("All", Name = "GetAllStudents")]
@@ -25,17 +28,20 @@ namespace CollegeApp.Controllers
         public async Task<ActionResult<IEnumerable<StudentDTO>>>  GetStudents()
         {
             _logger.LogInformation("GetStudents method started");
-            var students = await _dbContext.Students.Select(s => new StudentDTO()
-            {
-                Id = s.Id,
-                StudentName = s.StudentName,
-                Address = s.Address,
-                Email = s.Email,
-                DOB = s.DOB.ToShortDateString()
+            var students = await _dbContext.Students.ToListAsync();
+
+            var studentDTOData = _mapper.Map<StudentDTO>(students);
+            //var students = await _dbContext.Students.Select(s => new StudentDTO()
+            //{
+            //    Id = s.Id,
+            //    StudentName = s.StudentName,
+            //    Address = s.Address,
+            //    Email = s.Email,
+            //    DOB = s.DOB.ToShortDateString()
                 
-            }).ToListAsync();
+            //}).ToListAsync();
             //OK - 200 - Success
-            return Ok(students);
+            return Ok(studentDTOData);
         }
 
         [HttpGet]
