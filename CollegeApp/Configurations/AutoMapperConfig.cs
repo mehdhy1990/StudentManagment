@@ -8,7 +8,9 @@ namespace CollegeApp.Configurations
     {
         public AutoMapperConfig()
         {
-            CreateMap<StudentDTO,Student>().ReverseMap();
+            //transforming to Datetime
+            //CreateMap<StudentDTO,Student>().ReverseMap().AddTransform<DateTime>(n=>Convert.ToDateTime(n));
+            CreateMap<StudentDTO, Student>().ReverseMap();
         }
     }
 }
