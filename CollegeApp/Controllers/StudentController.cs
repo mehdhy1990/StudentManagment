@@ -13,12 +13,12 @@ namespace CollegeApp.Controllers
     public class StudentController : ControllerBase
     {
         private readonly ILogger<StudentController> _logger;
-        private readonly CollegeDbContext _dbContext;
+       
         private readonly IMapper _mapper;
-        public StudentController(ILogger<StudentController> logger, CollegeDbContext dbContext, IMapper mapper)
+        public StudentController(ILogger<StudentController> logger,  IMapper mapper)
         {
             _logger = logger;
-            _dbContext = dbContext;
+         
             _mapper = mapper;
         }
         [HttpGet]
