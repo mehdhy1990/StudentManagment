@@ -16,8 +16,9 @@ namespace CollegeApp.Data.Repository
             return await _dbContext.Students.ToListAsync();
         }
 
-        public async Task<Student> GetByIdAsync(int id)
+        public async Task<Student> GetByIdAsync(int id,bool useNoTracking=false)
         {
+            if (useNoTracking is true) return await _dbContext.Students.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
             return await _dbContext.Students.FirstOrDefaultAsync(x => x.Id == id);
         }
 
@@ -35,24 +36,16 @@ namespace CollegeApp.Data.Repository
 
         public async Task<int> UpdateAsync(Student student)
         {
-            var currentStudent = await _dbContext.Students.FirstOrDefaultAsync(x => x.Id == student.Id);
-            if (currentStudent == null) throw new NullReferenceException("there is no student with this id");
-
-            currentStudent.Id = student.Id;
-            currentStudent.StudentName = student.StudentName;
-            currentStudent.Address = student.Address;
-            currentStudent.Email = student.Email;
-            currentStudent.DOB = student.DOB;
+            _dbContext.Update(student);
 
             await _dbContext.SaveChangesAsync();
-            return currentStudent.Id;
+            return student.Id;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(Student student)
         {
-            var currentStudent = await _dbContext.Students.FirstOrDefaultAsync(x => x.Id == id);
-            if (currentStudent is null) throw new NullReferenceException("there is no student with this id");
-            _dbContext.Students.Remove(currentStudent);
+           
+            _dbContext.Students.Remove(student);
             await _dbContext.SaveChangesAsync();
             return true;
         }
