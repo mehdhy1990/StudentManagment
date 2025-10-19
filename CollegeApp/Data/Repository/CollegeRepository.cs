@@ -26,7 +26,7 @@ namespace CollegeApp.Data.Repository
             return await _dbSet.FirstOrDefaultAsync(filter);
         }
 
-        public async Task<T> GetByNameAsync(Expression<Func<T, bool>> filter,string name)
+        public async Task<T> GetByNameAsync(Expression<Func<T, bool>> filter)
         {
             return (await _dbSet.FirstOrDefaultAsync(filter));
         }

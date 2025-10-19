@@ -6,7 +6,7 @@ namespace CollegeApp.Data.Repository
     {
         Task<List<T>> GetAllAsync();
         Task<T> GetByIdAsync(Expression<Func<T, bool>> predicate, bool useNoTracking = false);
-        Task<T> GetByNameAsync(Expression<Func<T, bool>> predicate, string name);
+        Task<T> GetByNameAsync(Expression<Func<T, bool>> predicate);
         Task<T> CreateAsync(T dbRecord);
         Task<T> UpdateAsync(T dbRecord);
         Task<bool> DeleteAsync(T dbRecord);
