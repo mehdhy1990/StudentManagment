@@ -12,5 +12,9 @@ namespace CollegeApp.Data.Repository
         }
 
 
+        public Task<List<Student>> GetStudentByFeesAsync(int fee)
+        {
+            return null;
+        }
     }
 }
