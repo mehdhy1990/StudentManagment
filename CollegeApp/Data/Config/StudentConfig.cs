@@ -21,6 +21,8 @@ namespace CollegeApp.Data.Config
                 new Student(){Id = 1,StudentName = "mehdi",Address = "Abhar",Email = "mehdi@gmail.com",DOB = new DateTime(2022,12,2)},
                 new Student(){Id = 2,StudentName = "merss",Address = "Rasht",Email = "merss@gmail.com",DOB = new DateTime(2022,10,5)}
             });
+            builder.HasOne(n => n.Department).WithMany(n => n.Students).
+                HasForeignKey(n => n.DepartmentId).HasConstraintName("FK_Students_Department");
 
         }
     }
