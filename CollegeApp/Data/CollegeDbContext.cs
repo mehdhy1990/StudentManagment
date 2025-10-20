@@ -6,6 +6,7 @@ namespace CollegeApp.Data
     public class CollegeDbContext : DbContext
     {
         public DbSet<Student> Students { get; set; }
+        public DbSet<Department> Departments { get; set; }
         public CollegeDbContext(DbContextOptions<CollegeDbContext> options) : base(options) 
         {
 
@@ -15,6 +16,7 @@ namespace CollegeApp.Data
         {
 
             modelBuilder.ApplyConfiguration(new StudentConfig());
+            modelBuilder.ApplyConfiguration(new DepartmentConfig());
         }
     }
 }

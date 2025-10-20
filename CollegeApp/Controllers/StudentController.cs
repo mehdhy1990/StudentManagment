@@ -16,8 +16,8 @@ namespace CollegeApp.Controllers
         private readonly ILogger<StudentController> _logger;
        
         private readonly IMapper _mapper;
-        private readonly ICollegeRepository<Student> _studentRepository;
-        public StudentController(ILogger<StudentController> logger,  IMapper mapper, ICollegeRepository<Student> studentRepository)
+        private readonly IStudentRepository _studentRepository;
+        public StudentController(ILogger<StudentController> logger,  IMapper mapper, IStudentRepository studentRepository)
         {
             _logger = logger;
          
