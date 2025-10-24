@@ -35,7 +35,14 @@ builder.Services.AddAutoMapper(cfg => cfg.LicenseKey = "eyJhbGciOiJSUzI1NiIsImtp
 builder.Services.AddTransient<IMyLogger, LogToServerMemory>();
 builder.Services.AddTransient<IStudentRepository, StudentRepository>();
 builder.Services.AddTransient(typeof(ICollegeRepository<>), typeof(CollegeRepository<>));
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "MyTestCORS",
+        policy =>
+        {
+            policy.AllowAnyHeader().AllowAnyHeader().AllowAnyOrigin();
+        });
+});
 
 var app = builder.Build();
 
@@ -47,7 +54,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("MyTestCORS");
 app.UseAuthorization();
 
 app.MapControllers();
