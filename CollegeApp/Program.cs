@@ -58,5 +58,9 @@ app.UseCors("MyTestCORS");
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapGet("api/testendpoints2", context => 
+     context.Response.WriteAsync(builder.Configuration.GetValue<string>("JWTSecret")));
+});
 app.Run();
