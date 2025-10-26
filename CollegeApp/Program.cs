@@ -20,6 +20,7 @@ Log.Logger = new LoggerConfiguration().
 
 //Use serilog alogn with built-in loggers
 builder.Logging.AddSerilog();
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddDbContext<CollegeDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("CollegeAppDBConnection"));
@@ -37,7 +38,12 @@ builder.Services.AddTransient<IStudentRepository, StudentRepository>();
 builder.Services.AddTransient(typeof(ICollegeRepository<>), typeof(CollegeRepository<>));
 builder.Services.AddCors(options =>
 {
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+    });
     options.AddPolicy(name: "MyTestCORS",
+
         policy =>
         {
             policy.AllowAnyHeader().AllowAnyHeader().AllowAnyOrigin();
@@ -56,11 +62,19 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseCors("MyTestCORS");
 app.UseAuthorization();
-
-app.MapControllers();
+app.UseRouting();
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapGet("api/testendpoints2", context => 
-     context.Response.WriteAsync(builder.Configuration.GetValue<string>("JWTSecret")));
+    endpoints.MapGet("api/testingendpoint",
+            context => context.Response.WriteAsync("Test Response"))
+        .RequireCors("AllowOnlyLocalhost");
+
+    endpoints.MapControllers()
+        .RequireCors("AllowAll");
+
+    endpoints.MapGet("api/testendpoint2",
+        context => context.Response.WriteAsync(builder.Configuration.GetValue<string>("JWTSecret")));
+
 });
+
 app.Run();
