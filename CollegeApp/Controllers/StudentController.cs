@@ -3,6 +3,7 @@ using CollegeApp.Data;
 using CollegeApp.Data.Repository;
 using CollegeApp.Models;
 using CollegeApp.MyLogging;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ namespace CollegeApp.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors(policyName:"MyTestCOR")]
+    [Authorize(Roles = "SuperAdmin")]
     public class StudentController : ControllerBase
     {
         private readonly ILogger<StudentController> _logger;
