@@ -31,7 +31,7 @@ namespace CollegeApp.Controllers
             LoginResponseDTO response = new() { UserName = model.UserName };
             if (model.UserName == "mehdi" && model.Password == "mehdi")
             {
-                var key = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("JWTSecret"));
+                var key = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("JWTSecretForLocals"));
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var tokenDescriptor = new SecurityTokenDescriptor()
                 {

@@ -14,7 +14,7 @@ namespace CollegeApp.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors(policyName:"MyTestCOR")]
-    [Authorize(Roles = "SuperAdmin")]
+    [Authorize(AuthenticationSchemes = "LoginForLocals", Roles = "SuperAdmin")]
     public class StudentController : ControllerBase
     {
         private readonly ILogger<StudentController> _logger;
