@@ -39,26 +39,34 @@ builder.Services.AddAutoMapper(cfg => cfg.LicenseKey = "eyJhbGciOiJSUzI1NiIsImtp
 builder.Services.AddTransient<IMyLogger, LogToServerMemory>();
 builder.Services.AddTransient<IStudentRepository, StudentRepository>();
 builder.Services.AddTransient(typeof(ICollegeRepository<>), typeof(CollegeRepository<>));
-builder.Services.AddCors(options =>
-{
+builder.Services.AddCors(options => {
     options.AddDefaultPolicy(policy =>
     {
         policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
     });
-    options.AddPolicy(name: "MyTestCORS",
-
-        policy =>
-        {
-            policy.AllowAnyHeader().AllowAnyHeader().AllowAnyOrigin();
-        });
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+    });
+    options.AddPolicy("AllowOnlyLocalhost", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
+    });
+    options.AddPolicy("AllowOnlyGoogle", policy =>
+    {
+        policy.WithOrigins("http://google.com", "http://gmail.com", "http://drive.google.com").AllowAnyHeader().AllowAnyMethod();
+    });
+    options.AddPolicy("AllowOnlyMicrosoft", policy =>
+    {
+        policy.WithOrigins("http://outlook.com", "http://microsoft.com", "http://onedrive.google.com").AllowAnyHeader().AllowAnyMethod();
+    });
 });
-
 //jwt authentication
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
+}).AddJwtBearer("LoginForGoogleUsers",options =>
 {
     options.SaveToken = true;
     options.TokenValidationParameters = new TokenValidationParameters()
@@ -81,10 +89,14 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("MyTestCORS");
 
 app.UseRouting();
+
+app.UseCors("AllowAll");
+
 app.UseAuthorization();
+
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapGet("api/testingendpoint",
