@@ -12,6 +12,7 @@ namespace CollegeApp.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [AllowAnonymous]
+    
     public class LoginController : ControllerBase
     {
         private readonly IConfiguration _configuration;
@@ -36,12 +37,15 @@ namespace CollegeApp.Controllers
                 {
                     Subject = new ClaimsIdentity(new Claim[]
                     {
-                        new Claim(ClaimTypes.Name,model.UserName),
-                        new Claim(ClaimTypes.Role,"Admin")
+                        //Username
+                        new Claim(ClaimTypes.Name, model.UserName),
+                        //Role
+                        new Claim(ClaimTypes.Role, "Admin")
                     }),
                     Expires = DateTime.Now.AddHours(4),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),SecurityAlgorithms.HmacSha512Signature)
+                    SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
                 };
+
                 var token = tokenHandler.CreateToken(tokenDescriptor);
                 response.Token = tokenHandler.WriteToken(token);
             }
