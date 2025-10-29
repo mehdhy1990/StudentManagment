@@ -77,6 +77,17 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuer = false,
       
     };
+}).AddJwtBearer("LoginForMicrosoftUsers", options =>
+{
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey =
+            new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetValue<string>("JWTSecret"))),
+        ValidateIssuer = false,
+
+    };
 });
 
 var app = builder.Build();
