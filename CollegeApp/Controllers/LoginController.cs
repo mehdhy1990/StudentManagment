@@ -29,9 +29,16 @@ namespace CollegeApp.Controllers
             }
 
             LoginResponseDTO response = new() { UserName = model.UserName };
+            byte[] key = null;
+            if (model.Policy == "Local")
+                key = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("JWTSecretForLocals"));
+            else if (model.Policy == "Microsoft")
+                key = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("JWTSecretforMicrosoft"));
+            else if (model.Policy == "Google")
+                key = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("JWTSecretforGoogle"));
             if (model.UserName == "mehdi" && model.Password == "mehdi")
             {
-                var key = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("JWTSecretForLocals"));
+                
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var tokenDescriptor = new SecurityTokenDescriptor()
                 {
